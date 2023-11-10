@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>>
+</head>
+<body>
+    <div class="login-section">
+        <h1>Create a account for zoo</h1>
+        <p>Please fill in the registration form</p>
+        <form id="registration-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password" required><br>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Login here</a></p>
+
+        <!-- Error message display -->
+        <p class="error-message" id="error-message"></p>
+    </div>
+
+    <!-- Add your JavaScript code here to handle form submission and registration -->
+    <script>
+        
+  document.getElementById("registration-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    // Get form data
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      document.getElementById("error-message").textContent = "Passwords do not match";
+      return;
+    }
+
+    // Create a JSON object with the form data
+    const formData = {
+      member_name: name,
+      member_email: email,
+      member_password: password,
+    };
+
+    // Make an HTTP POST request to your Spring Boot backend
+    fetch("http://localhost:8080/api/members/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response from the server (e.g., display success or error messages)
+        if (data.error) {
+          document.getElementById("error-message").textContent = data.error;
+        } else {
+          document.getElementById("error-message").textContent = "Registration successful!";
+        }
+      })
+      .catch((error) => {
+        // Handle any network or server-related errors
+        document.getElementById("error-message").textContent = "An error occurred: " + error;
+      });
+  });
+</script>
