@@ -16,9 +16,51 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required><br>
 
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="button" class="btn btn-primary" onclick="login()">Login</button>
         </form>
         <p>You don't have a user <a href="createMember.html">Create a user here </a></p>
+        <div id="login-status"></div>
     </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            // Create a JSON object with the login data
+            const loginData = {
+                member_username: username,
+                member_password: password,
+            };
+
+            // Make an HTTP POST request to your Spring Boot backend for login
+            fetch("http://localhost:8080/api/members/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(loginData),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                // Handle the response from the server (e.g., display success or error messages)
+                const loginStatus = document.getElementById("login-status");
+                if (data.error) {
+                    loginStatus.textContent = data.error;
+                } else {
+                    loginStatus.textContent = "Login successful! Welcome, " + data.member_name + "!";
+                    // You may redirect the user to another page or perform additional actions here
+                }
+            })
+            .catch((error) => {
+                // Handle any network or server-related errors
+                const loginStatus = document.getElementById("login-status");
+                loginStatus.textContent = "An error occurred: " + error;
+            });
+        }
+    </script>
+
+
+
 </body>
 </html>
